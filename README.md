@@ -15,6 +15,8 @@ OpenCore EFI and notes for running macOS Tahoe 26.7.2 on a Dell OptiPlex Micro w
 | Wake from **display sleep** | Works (failed once early on; see Known issues) |
 | Built-in audio (AppleHDA via SimpleHDA) | **Disabled**: it crashes the kernel when a DP monitor connects |
 | USB audio (e.g. Focusrite) | Should work (class compliant) |
+| USB | Custom map `UTBMap.kext` (14 ports, built with USBToolBox on Windows; see CHANGES #7) |
+| Lenovo ThinkPad Hybrid USB-C dock (DisplayLink) | Map now includes the USB-C port's USB 2 *and* USB 3 halves; dock re-test pending (needs DisplayLink Manager) |
 | Ethernet (IntelMausi), Wi-Fi (AirportItlwm), Bluetooth | Enabled in the config; not re-checked in this session |
 
 ## Hardware
@@ -34,6 +36,7 @@ OpenCore EFI and notes for running macOS Tahoe 26.7.2 on a Dell OptiPlex Micro w
 | `UPDATING-WHATEVERXE.md` | How to update WhateverXe, WhateverXe Graphics, Lilu and AMFIPass safely |
 | `TROUBLESHOOTING.md` | How each failure was diagnosed, with the exact log lines, and how to get logs when the screen is black |
 | `AGENTS.md` | Instructions for AI agents working on this repo |
+| `EFI/OC/Kexts/UTBMap.kext` | USB port map for **this** board. Re-map if your OptiPlex differs |
 | `tools/Collect-Dell-Graphics.command` | Read-only diagnostics script. Run it from the USB; it writes a report next to itself |
 
 ## Before you boot

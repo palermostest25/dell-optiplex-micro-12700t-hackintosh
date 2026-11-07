@@ -39,6 +39,11 @@ How each problem was diagnosed on this machine. Use the same steps when somethin
 - Workaround: disable display sleep.
 - To diagnose: let it fail, wait 60 s, note whether Caps Lock still toggles, hard reset, then collect (step 3 above) and look at WindowServer and kernel lines around the wake time.
 
+### 5. DisplayLink dock: "you connected a device that wasn't a DisplayLink device"
+- `system_profiler SPUSBDataType` showed only the dock's Lenovo `0x17ef` USB 2 hubs and a Billboard device, all at 480 Mb/s. The DisplayLink chip (`0x17e9`) sits behind the dock's USB 3 hub, which never appeared.
+- Cause: the generic `UTBDefault` map didn't give the USB-C port a working USB 3 path.
+- Fix: custom `UTBMap.kext` built in Windows (CHANGES #7). The first build missed the USB-C's USB 2 half (HS02), so USB 2 devices on the dock stopped working. Map **both** halves of every port.
+
 ## Harmless noise you will see in verbose boot
 
 - `Kext com.apple.driver.IOVersatile - can't resolve dependencies` / `Couldn't alloc class "IOVersatileHWA"`

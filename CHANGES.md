@@ -33,6 +33,7 @@ The original EFI matches **OpCore Simplify** output for an Alder Lake desktop wh
 | 4 | `-x` Safe Mode (diagnostic) | Reached the desktop and collected crash reports and logs | Removed |
 | 5 | SMBIOS → **`MacBookPro16,2`** (new serial/MLB); `PollAppleHotKeys` → `true` | AGDP config for that board ID is `None` (the same SMBIOS a working WhateverXe Raptor Lake laptop uses). WindowServer started and Metal loaded. DP port 1 showed the console; port 2 went black | **Kept** |
 | 6 | **SimpleHDA disabled** | Fixed the kernel panic in `AppleHDAHDMI_DPDriver::handleValidEDIDAction` that hit when the DP monitor's EDID arrived. Desktop works on DP port 1 | **Kept** |
+| 7 | **Custom USB map**: `UTBMap.kext` added (enabled), `UTBDefault.kext` disabled | With the generic map, the DisplayLink dock only enumerated at 480 Mb/s (no `0x17e9` device) and DisplayLink Manager said it wasn't a DisplayLink device. A first 12-port map missed the USB-C's USB 2 half (HS02), so USB 2 devices on the dock failed. The 14-port map below fixes both | **Kept** |
 
 ## Net diff: original config → this repo
 
@@ -42,9 +43,11 @@ Misc/Boot/PollAppleHotKeys              false     -> true
 PlatformInfo/Generic/SystemProductName  MacPro7,1 -> MacBookPro16,2
 PlatformInfo/Generic/SystemSerialNumber (regenerated for MacBookPro16,2; placeholder in repo)
 PlatformInfo/Generic/MLB                (regenerated; placeholder in repo)
+Kernel/Add[UTBDefault.kext]/Enabled     true      -> false
+Kernel/Add[UTBMap.kext]                 (new, Enabled true, codeless)
 ```
 
-No kexts, ACPI tables, drivers or quirks were added or removed. `SystemUUID` and `ROM` were not changed on the machine; they are placeholders here only for privacy.
+Apart from `UTBMap.kext`, no kexts, ACPI tables, drivers or quirks were added or removed. `SystemUUID` and `ROM` were not changed on the machine; they are placeholders here only for privacy.
 
 ## Why not iMac20,1 or MacPro7,1?
 
@@ -56,3 +59,17 @@ No kexts, ACPI tables, drivers or quirks were added or removed. `SystemUUID` and
 | **MacBookPro16,2** | Mac-5F9802EFE386AA28 | None | **Works** |
 
 Macmini8,1 would be the classic iGPU-only choice, but Tahoe dropped it.
+
+## USB map (UTBMap.kext)
+
+Built with USBToolBox in Windows (Windows To Go). XHCI `8086:7AE0`. Under the 15-port limit.
+
+| Name | Port | Type | What |
+| --- | --- | --- | --- |
+| HS01, HS03–HS06 | 1, 3, 4, 5, 6 | 3 (USB-A) | USB 2 halves of the USB-A ports |
+| HS02 | 2 | 9 (USB-C) | USB 2 half of the USB-C port (dock's USB 2 hubs) |
+| HS07 | 14 (0x0E) | 255 (internal) | Bluetooth |
+| SS01–SS05 | 17, 19, 20, 21, 24 | 3 (USB-A) | USB 3 halves (partners of HS 1, 5, 6, 3, 4) |
+| SS06, SS07 | 25, 26 | 9 (USB-C) | USB 3 half of the USB-C port, one per plug orientation |
+
+To re-map: run USBToolBox in Windows from the same folder (it saves `usb.json` next to itself and remembers the earlier ports), discover, select, Build, and replace `EFI/OC/Kexts/UTBMap.kext`. Every port needs **both** halves mapped: USB 2 devices use HS, USB 3 devices use SS. Don't commit `usb.json`; it contains device serial numbers.

@@ -14,8 +14,9 @@ An OpenCore EFI plus notes for one physical machine: a Dell OptiPlex Micro (most
 4. **One variable per test boot.** Each test costs the owner a reboot and a USB swap. Record what changed and the result in `CHANGES.md` / `TROUBLESHOOTING.md`.
 5. **Validate every config change** with `ocvalidate` from the OpenCore release that matches `EFI/OC/OpenCore.efi` (1.0.x; 1.0.8 validates it).
 6. **Back up before editing** the owner's live EFI (USB root `EFI/` or the internal EFI partition). Keep the previous config next to it or zipped.
-7. Don't add WhateverGreen. It conflicts with WhateverXe.
-8. Don't ship Apple driver binaries in this repo. The WhateverXe Graphics pkg installs them inside macOS.
+7. Keep `UTBMap.kext` enabled and `UTBDefault.kext` disabled. Never commit USBToolBox's `usb.json` (device serials).
+8. Don't add WhateverGreen. It conflicts with WhateverXe.
+9. Don't ship Apple driver binaries in this repo. The WhateverXe Graphics pkg installs them inside macOS.
 
 ## Workflow that worked
 
@@ -36,6 +37,7 @@ An OpenCore EFI plus notes for one physical machine: a Dell OptiPlex Micro (most
 | Working output | Rear DisplayPort 1 |
 | Acceleration | Metal 2, 1536 MB dynamic VRAM |
 | Display sleep wake | Works (one early failure, not reproduced) |
+| USB | `UTBMap.kext`, 14 ports; USB-C = HS02 + SS06/SS07 (ports 2, 25, 26) |
 
 ## Open work (priority order)
 
@@ -43,3 +45,4 @@ An OpenCore EFI plus notes for one physical machine: a Dell OptiPlex Micro (most
 2. Audio: find a way to get built-in audio without loading AppleHDA's DP-audio path, or accept USB audio only.
 3. If display-sleep wake fails again, follow TROUBLESHOOTING #4.
 4. Confirm the exact OptiPlex model and update the docs.
+5. Confirm the Lenovo DisplayLink dock with the 14-port map: `system_profiler SPUSBDataType` should show a 5 Gb/s Lenovo hub and vendor `0x17e9`.

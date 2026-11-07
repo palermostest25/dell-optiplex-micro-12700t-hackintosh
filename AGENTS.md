@@ -34,11 +34,12 @@ An OpenCore EFI plus notes for one physical machine: a Dell OptiPlex Micro (most
 | DVMT | 60 MB, using `-igfxdvmt` + `framebuffer-patch-enable` + `framebuffer-stolenmem 0x03C00000` |
 | csr-active-config | `0x0A03` (WhateverXe needs ⊇ `0x803`) |
 | Working output | Rear DisplayPort 1 |
-| Open issue | No picture after display sleep |
+| Acceleration | Metal 2, 1536 MB dynamic VRAM |
+| Display sleep wake | Works (one early failure, not reproduced) |
 
 ## Open work (priority order)
 
-1. Display-sleep wake (see TROUBLESHOOTING #4). Needs a log from a failed wake.
-2. Re-test DP port 2 with SimpleHDA off.
-3. Audio: find a way to get built-in audio without loading AppleHDA's DP-audio path, or accept USB audio only.
+1. Re-test DP port 2 with SimpleHDA off.
+2. Audio: find a way to get built-in audio without loading AppleHDA's DP-audio path, or accept USB audio only.
+3. If display-sleep wake fails again, follow TROUBLESHOOTING #4.
 4. Confirm the exact OptiPlex model and update the docs.

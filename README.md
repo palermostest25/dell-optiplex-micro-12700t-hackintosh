@@ -9,10 +9,10 @@ OpenCore EFI and notes for running macOS Tahoe 26.7.2 on a Dell OptiPlex Micro w
 | Feature | Status |
 | --- | --- |
 | Boot to desktop | Works |
-| UHD 770 acceleration (Metal) via WhateverXe | Works. The Metal compiler loads; check *About This Mac* |
+| UHD 770 acceleration via WhateverXe | **Works**: Metal 2, 1536 MB dynamic VRAM (confirmed in System Information) |
 | Rear DisplayPort **1** | Works |
 | Rear DisplayPort **2** | Untested since the audio fix. It crashed before (see Known issues) |
-| Wake from **display sleep** | **Broken**: stays black. Workaround below |
+| Wake from **display sleep** | Works (failed once early on; see Known issues) |
 | Built-in audio (AppleHDA via SimpleHDA) | **Disabled**: it crashes the kernel when a DP monitor connects |
 | USB audio (e.g. Focusrite) | Should work (class compliant) |
 | Ethernet (IntelMausi), Wi-Fi (AirportItlwm), Bluetooth | Enabled in the config; not re-checked in this session |
@@ -61,9 +61,9 @@ OpenCore EFI and notes for running macOS Tahoe 26.7.2 on a Dell OptiPlex Micro w
 
 Safe Mode: add `-x`. `PollAppleHotKeys` is on, but holding Shift in the picker did **not** work on this machine, so edit the boot args instead.
 
-## Display sleep workaround
+## If display wake ever fails again
 
-Until wake is fixed, stop the display from sleeping:
+Wake now works. It failed once before the setup settled. If it comes back, stop the display from sleeping:
 
 - System Settings → Lock Screen → *Turn display off … when inactive* → **Never** (a screen saver is fine), or
 - `sudo pmset -a displaysleep 0`
@@ -72,7 +72,7 @@ WhateverXe's README lists DisplayPort reconnection causing black screens or free
 
 ## Known issues
 
-1. **Display sleep wake**: black screen after the display sleeps (open; see the workaround).
+1. **Display sleep wake**: failed once, now works. If it returns, use the workaround above and collect logs (TROUBLESHOOTING #4).
 2. **AppleHDA DP-audio panic**: with SimpleHDA enabled, plugging or waking a DP monitor panics in `AppleHDAHDMI_DPDriver::handleValidEDIDAction`. SimpleHDA is disabled; fixing audio needs either HDMI/DP audio disabled or a different audio approach.
 3. **DP port 2**: it went black when that panic hit. Re-test now that SimpleHDA is off.
 4. **iCloud/iMessage**: the serial changed twice during setup (MacPro7,1 → iMac20,1 → MacBookPro16,2). Sign in again if Apple services act up.

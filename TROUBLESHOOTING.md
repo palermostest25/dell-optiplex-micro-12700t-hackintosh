@@ -34,7 +34,7 @@ How each problem was diagnosed on this machine. Use the same steps when somethin
 - AppleHDA only loads on Tahoe because **SimpleHDA** force-loads it.
 - Fix: disable SimpleHDA. Use DP port 1.
 
-### 4. Display doesn't wake after display sleep (open)
+### 4. Display doesn't wake after display sleep (seen once; now works)
 - Matches WhateverXe's known issue: DP reconnection on Alder Lake-S is slow, or goes black/freezes.
 - Workaround: disable display sleep.
 - To diagnose: let it fail, wait 60 s, note whether Caps Lock still toggles, hard reset, then collect (step 3 above) and look at WindowServer and kernel lines around the wake time.
